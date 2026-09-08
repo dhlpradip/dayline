@@ -1,0 +1,72 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+  WEB
+  DESKTOP
+}
+
+model Account {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email       String       @unique @db.VarChar(320)
+  createdAt   DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime     @default(now()) @updatedAt @db.Timestamptz(3)
+  sessions    Session[]
+  devices     Device[]
+  preferences Preferences?
+
+  @@map("accounts")
+}
+
+// Foundation only. Future auth must store a cryptographic token digest, never a bearer token.
+model Session {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId String    @db.Uuid
+  tokenHash String    @unique @db.Char(64)
+  expiresAt DateTime  @db.Timestamptz(3)
+  revokedAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime  @default(now()) @db.Timestamptz(3)
+  account   Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model Device {
+  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  accountId      String         @db.Uuid
+  installationId String         @db.Uuid
+  platform       DevicePlatform
+  name           String?        @db.VarChar(100)
+  lastSeenAt     DateTime?      @db.Timestamptz(3)
+  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime        @default(now()) @updatedAt @db.Timestamptz(3)
+  account        Account        @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, installationId])
+  @@map("devices")
+}
+
+model Preferences {
+  accountId    String   @id @db.Uuid
+  timezone     String   @default("UTC") @db.VarChar(100)
+  locale       String   @default("en") @db.VarChar(35)
+  // The migration adds a CHECK constraint: 0 = Sunday through 6 = Saturday.
+  weekStartsOn Int      @default(1) @db.SmallInt
+  createdAt    DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt    DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  account      Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@map("preferences")
+}

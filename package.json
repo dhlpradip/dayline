@@ -1,0 +1,43 @@
+{
+  "name": "dayline",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=22.22.0 <23",
+    "pnpm": ">=9.15.0 <10"
+  },
+  "scripts": {
+    "dev:mobile": "pnpm --filter @dayline/mobile start",
+    "dev:api": "pnpm --filter @dayline/api dev",
+    "ios": "pnpm --filter @dayline/mobile ios",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint . --max-warnings 0",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:api": "pnpm --filter @dayline/api test",
+    "build": "pnpm --filter @dayline/api build",
+    "build:mobile": "pnpm --filter @dayline/mobile exec expo export --platform ios",
+    "db:generate": "pnpm --filter @dayline/api db:generate",
+    "db:migrate": "pnpm --filter @dayline/api db:migrate",
+    "validate": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "pnpm": {
+    "overrides": {
+      "react-dom": "19.2.3"
+    },
+    "patchedDependencies": {
+      "expo-calendar@57.0.2": "patches/expo-calendar@57.0.2.patch"
+    }
+  },
+  "devDependencies": {
+    "@dayline/eslint-config": "workspace:*",
+    "@types/node": "^22.19.0",
+    "eslint": "^9.39.0",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.6",
+    "typescript": "~6.0.3",
+    "vitest": "^3.2.4"
+  }
+}

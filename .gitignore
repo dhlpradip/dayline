@@ -1,0 +1,14 @@
+node_modules/
+.cache/
+.tools/
+.expo/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+.DS_Store
+*.tsbuildinfo
+apps/mobile/ios/
+apps/mobile/android/
+apps/api/src/generated/

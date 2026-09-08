@@ -1,0 +1,12 @@
+diff --git a/ios/Next/CalendarNextModule.swift b/ios/Next/CalendarNextModule.swift
+--- a/ios/Next/CalendarNextModule.swift
++++ b/ios/Next/CalendarNextModule.swift
+@@ -401,7 +401,7 @@
+       }
+ 
+       Property("timeZone") { (expoEvent: ExpoCalendarEvent) in
+-        expoEvent.event?.timeZone?.localizedName(for: .shortStandard, locale: .current)
++        expoEvent.event?.timeZone?.identifier
+       }
+ 
+       Property("url") { (expoEvent: ExpoCalendarEvent) in
